@@ -24,7 +24,7 @@ def tool_caller(session: ClientSession):
     async def call_tool(name: str, args: dict) -> tuple[bool, str]:
         result = await session.call_tool(name, args)
         text = "".join(block.text for block in result.content if block.type == "text")
-        return not result.isError, text
+        return not result.is_error, text
 
     return call_tool
 
@@ -44,7 +44,7 @@ async def run_goal(goal: str, planner: Planner, session: ClientSession,
 
 async def claude_tools(session: ClientSession) -> list[dict]:
     listed = await session.list_tools()
-    return [{"name": t.name, "description": t.description, "input_schema": t.inputSchema}
+    return [{"name": t.name, "description": t.description, "input_schema": t.input_schema}
             for t in listed.tools]
 
 

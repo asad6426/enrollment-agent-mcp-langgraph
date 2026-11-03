@@ -3,6 +3,7 @@ import copy
 import json
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
 COURSES = {
     "PY101": {"title": "Python Foundations", "topics": ["python"], "prerequisites": []},
@@ -26,9 +27,9 @@ def missing_prerequisites(student_id: str, course_id: str) -> list[str]:
 
 def _require(student_id: str, course_id: str) -> None:
     if student_id not in STUDENTS:
-        raise ValueError(f"Unknown student: {student_id}")
+        raise ToolError(f"Unknown student: {student_id}")
     if course_id not in COURSES:
-        raise ValueError(f"Unknown course: {course_id}")
+        raise ToolError(f"Unknown course: {course_id}")
 
 
 @mcp.tool()
@@ -47,7 +48,7 @@ def search_courses(topic: str) -> str:
 def get_student_progress(student_id: str) -> str:
     """Return the courses a student has completed and is enrolled in."""
     if student_id not in STUDENTS:
-        raise ValueError(f"Unknown student: {student_id}")
+        raise ToolError(f"Unknown student: {student_id}")
     return json.dumps(STUDENTS[student_id])
 
 
@@ -65,7 +66,7 @@ def enroll_student(student_id: str, course_id: str) -> str:
     _require(student_id, course_id)
     missing = missing_prerequisites(student_id, course_id)
     if missing:
-        raise ValueError(f"Missing prerequisites: {', '.join(missing)}")
+        raise ToolError(f"Missing prerequisites: {', '.join(missing)}")
     if course_id not in STUDENTS[student_id]["enrolled"]:
         STUDENTS[student_id]["enrolled"].append(course_id)
     return json.dumps({"enrolled": STUDENTS[student_id]["enrolled"]})
