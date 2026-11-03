@@ -2,7 +2,7 @@
 import copy
 import json
 
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import MCPServer
 
 COURSES = {
     "PY101": {"title": "Python Foundations", "topics": ["python"], "prerequisites": []},
@@ -16,7 +16,7 @@ INITIAL_STUDENTS = {
 }
 STUDENTS = copy.deepcopy(INITIAL_STUDENTS)
 
-mcp = FastMCP("course-catalogue")
+mcp = MCPServer("course-catalogue")
 
 
 def missing_prerequisites(student_id: str, course_id: str) -> list[str]:

@@ -1,4 +1,4 @@
 anthropic>=1.0
 langgraph>=0.6
-mcp>=1.10
+mcp>=2,<3
 pytest>=8
