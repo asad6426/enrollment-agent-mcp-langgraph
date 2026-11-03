@@ -1,0 +1,34 @@
+name: CI
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - name: Demo transcripts
+        run: |
+          mkdir -p results
+          {
+            python -m agent_lab "Which course teaches pytorch?"
+            echo
+            python -m agent_lab "Enroll S100 in DL301"
+            echo
+            python -m agent_lab "Enroll S100 in DL301" --deny
+            echo
+            python -m agent_lab "Enroll S200 in DL301"
+          } | tee results/demo.txt
+      - run: pip freeze | grep -iE '^(anthropic|langgraph|mcp)==' | tee results/versions.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-results
+          path: results/
+          if-no-files-found: ignore
